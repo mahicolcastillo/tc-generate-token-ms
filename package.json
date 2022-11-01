@@ -1,0 +1,50 @@
+{
+  "name": "tc-products_ms",
+  "version": "1.0.0",
+  "description": "Example for artifacts tucomanda",
+  "main": "index.js",
+  "scripts": {
+    "start": "node dist/src/index.js",
+    "debug": "(. ./scripts/enviroment_variables.sh && nodemon src/index.ts | pino-pretty -t)",
+    "test": "(. ./scripts/enviroment_variables.sh && jest --env=node )",
+    "test:coverage": "(. ./scripts/enviroment_variables.sh && jest --env=node --coverage )",
+    "eslint": "eslint . --ext .ts",
+    "build": "tsc --build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mahicolcastillo/tc-example.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mahicolcastillo/tc-example/issues"
+  },
+  "homepage": "https://github.com/mahicolcastillo/tc-example#readme",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.16.4",
+    "express-async-errors": "^3.1.1",
+    "express-validator": "^6.14.2",
+    "helmet": "^6.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "tslog": "^3.3.4"
+  },
+  "devDependencies": {
+    "@types/express": "^4.16.1",
+    "@types/jest": "^29.2.0",
+    "@types/jsonwebtoken": "^8.5.9",
+    "@types/node": "^18.11.3",
+    "@typescript-eslint/eslint-plugin": "^5.40.1",
+    "@typescript-eslint/parser": "^5.40.1",
+    "eslint": "^8.26.0",
+    "jest": "^29.2.1",
+    "node-mocks-http": "^1.11.0",
+    "nodemon": "^2.0.20",
+    "pino-pretty": "^9.1.1",
+    "ts-jest": "^29.0.3",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.4"
+  }
+}

@@ -1,0 +1,198 @@
+name: CI/CD
+on:
+  push:
+    branches: [tucomanda_dev]
+  pull_request:
+    branches: [tucomanda_dev]
+jobs:
+  AvoidRedundancy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Cancel previous redundant builds
+      uses: styfle/cancel-workflow-action@0.9.1
+      with:
+        access_token: ${{ github.token }}
+
+  Validate:
+    name: Validate version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: git fetch --all --tags
+      - name: Check Release Version
+        uses: thebongy/version-check@v1
+        with:
+          file: package.json
+          tagFormat: v${version}
+        id: version_check_staging
+      - run: echo "Version ${{steps.version_check_staging.outputs.releaseVersion}}"
+
+  Sonar:
+    needs: [Validate]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        fetch-depth: 0
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@master
+      with:
+        args: >
+          -Dsonar.organization=mahicolcastillo
+          -Dsonar.projectKey=mahicolcastillo_tc-products_ms
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    - name: SonarQube Quality Gate check
+      id: sonarqube-quality-gate-check
+      uses: sonarsource/sonarqube-quality-gate-action@master
+      # Force to fail step after specific time.
+      timeout-minutes: 5
+      env:
+       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    - name: "SonarQube Quality Gate Status value"
+      run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
+
+  Lint:
+    needs: [Sonar]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with: 
+        fetch-depth: 0
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '14.18.1'
+    - name: Install dependencies
+      run: npm ci
+    - name: Lint
+      run: npm run eslint
+
+  Build:
+    needs: [Sonar]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with: 
+        fetch-depth: 0
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '14.18.1'
+    - name: Install dependencies
+      run: npm ci
+    - name: Build
+      run: npm run build
+    - uses: actions/upload-artifact@v2
+      with:
+        name: dist
+        path: dist
+
+  UnitTest:
+    needs: [Lint, Build]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with: 
+        fetch-depth: 0
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '14.18.1'
+    - name: Install dependencies
+      run: npm ci
+    - uses: actions/download-artifact@v2
+      with:
+        name: dist
+        path: dist
+    - name: unitTest
+      run: npm run test
+
+  Coverage:
+    needs: [UnitTest]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with: 
+        fetch-depth: 0
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '14.18.1'
+    - name: Install dependencies
+      run: npm ci
+    - name: unitTest
+      run: npm run test:coverage
+    - name: Check test coverage
+      id: test-coverage
+      uses: johanvanhelden/gha-clover-test-coverage-check@v1
+      with:
+        percentage: "90"
+        filename: "./coverage/clover.xml"
+
+  DeployQA:
+    needs: [Coverage]
+    runs-on: ubuntu-latest
+    environment:
+      name: QACALL
+    steps:
+    - uses: actions/checkout@v3
+    - uses: akhileshns/heroku-deploy@v3.12.12
+      with:
+         heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+         heroku_app_name: ${{secrets.HEROKU_APP}}
+         heroku_email: ${{secrets.HEROKU_MAIL}}
+         healthcheck: "https://${{secrets.HEROKU_APP}}.herokuapp.com/microservice/tc-products_ms/healthcheck"
+         rollbackonhealthcheckfailed: true
+
+  Release:
+    needs: [DeployQA]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: git fetch --all --tags
+      - name: Check Release Version
+        uses: thebongy/version-check@v1
+        with:
+          file: package.json
+          tagFormat: v${version}
+        id: version_check_staging
+      - run: echo "${{steps.version_check_staging.outputs.releaseVersion}}"
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          tag_name: ${{steps.version_check_staging.outputs.releaseVersion}}
+          release_name: Release ${{steps.version_check_staging.outputs.releaseVersion}}
+          draft: false
+          prerelease: false
+
+  # DeployProd:
+  #   needs: [Release]
+  #   if: ${{ github.event_name == 'push' }}
+  #   runs-on: ubuntu-latest
+  #   environment:
+  #     name: PRODCALL
+  #   steps:    
+  #   - uses: actions/checkout@v3
+  #     with: 
+  #       fetch-depth: 0
+  #   - name: Update SHA
+  #     run: echo $GITHUB_SHA > $GITHUB_WORKSPACE/app/_meta
+  #   - name: Build image
+  #     run: docker build -t registry.digitalocean.com/tucomandaqa/tc-products-ms:$(echo $GITHUB_SHA | head -c7) .
+  #   - name: Install doctl
+  #     uses: digitalocean/action-doctl@v2
+  #     with:
+  #       token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+  #   - name: Log in Container Registry
+  #     run: doctl registry login --expiry-seconds 600
+  #   - name: Push image
+  #     run: docker push registry.digitalocean.com/tucomandaqa/tc-products-ms:$(echo $GITHUB_SHA | head -c7)
+  #   - name: Update deployment file
+  #     run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|registry.digitalocean.com/tucomandaqa/tc-products-ms:'${TAG}'|' $GITHUB_WORKSPACE/config/deployment.yml
+  #   - name: Save config cluster
+  #     run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 tucomandaqa
+  #   - name: Deploy Kubernetes
+  #     run: kubectl apply -f $GITHUB_WORKSPACE/config/deployment.yml
+  #   - name: Verify deployment
+  #     run: kubectl rollout status deployment/tc-products-ms -n microservices

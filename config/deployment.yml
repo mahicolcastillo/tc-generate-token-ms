@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tc-products-ms
+  namespace: microservices
+  labels:
+    app: tc-products-ms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tc-products-ms
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: tc-products-ms
+    spec:
+      containers:
+      - name: tucomandaqa
+        image: <IMAGE>
+        ports:
+        - containerPort: 3000
+        resources:
+          requests:
+            cpu: 100m
+          limits:
+            cpu: 100m        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tc-products-ms
+  namespace: microservices
+  labels:
+    app: tc-products-ms
+spec:
+  type: NodePort
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 30000
+  selector:
+    app: tc-products-ms
