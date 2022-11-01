@@ -1,6 +1,6 @@
 {
   "name": "tc-generate-token-ms",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Generate Token for TuComanda Apps",
   "main": "index.js",
   "scripts": {
