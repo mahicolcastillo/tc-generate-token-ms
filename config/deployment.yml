@@ -1,15 +1,15 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tc-products-ms
+  name: tc-generate-token-ms
   namespace: microservices
   labels:
-    app: tc-products-ms
+    app: tc-generate-token-ms
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: tc-products-ms
+      app: tc-generate-token-ms
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -18,13 +18,13 @@ spec:
   template:
     metadata:
       labels:
-        app: tc-products-ms
+        app: tc-generate-token-ms
     spec:
       containers:
       - name: tucomandaqa
         image: <IMAGE>
         ports:
-        - containerPort: 3000
+        - containerPort: 30001
         resources:
           requests:
             cpu: 100m
@@ -34,15 +34,15 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: tc-products-ms
+  name: tc-generate-token-ms
   namespace: microservices
   labels:
-    app: tc-products-ms
+    app: tc-generate-token-ms
 spec:
   type: NodePort
   ports:
-    - port: 3000
-      targetPort: 3000
-      nodePort: 30000
+    - port: 30001
+      targetPort: 30001
+      nodePort: 30001
   selector:
-    app: tc-products-ms
+    app: tc-generate-token-ms

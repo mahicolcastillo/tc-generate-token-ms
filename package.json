@@ -1,7 +1,7 @@
 {
-  "name": "tc-products_ms",
+  "name": "tc-generate-token-ms",
   "version": "1.0.0",
-  "description": "Example for artifacts tucomanda",
+  "description": "Generate Token for TuComanda Apps",
   "main": "index.js",
   "scripts": {
     "start": "node dist/src/index.js",
@@ -13,15 +13,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mahicolcastillo/tc-example.git"
+    "url": "git+https://github.com/mahicolcastillo/tc-generate-token-ms.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/mahicolcastillo/tc-example/issues"
+    "url": "https://github.com/mahicolcastillo/tc-generate-token-ms/issues"
   },
-  "homepage": "https://github.com/mahicolcastillo/tc-example#readme",
+  "homepage": "https://github.com/mahicolcastillo/tc-generate-token-ms#readme",
   "dependencies": {
     "dotenv": "^16.0.3",
     "express": "^4.16.4",

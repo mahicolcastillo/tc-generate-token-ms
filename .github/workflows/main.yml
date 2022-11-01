@@ -39,7 +39,7 @@ jobs:
       with:
         args: >
           -Dsonar.organization=mahicolcastillo
-          -Dsonar.projectKey=mahicolcastillo_tc-products_ms
+          -Dsonar.projectKey=mahicolcastillo_tc-generate-token-ms
       env:
         GITHUB_TOKEN: ${{ github.token }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -139,7 +139,7 @@ jobs:
          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
          heroku_app_name: ${{secrets.HEROKU_APP}}
          heroku_email: ${{secrets.HEROKU_MAIL}}
-         healthcheck: "https://${{secrets.HEROKU_APP}}.herokuapp.com/microservice/tc-products_ms/healthcheck"
+         healthcheck: "https://${{secrets.HEROKU_APP}}.herokuapp.com/microservice/tc-generate-token-ms/healthcheck"
          rollbackonhealthcheckfailed: true
 
   Release:

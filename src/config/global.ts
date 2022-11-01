@@ -3,7 +3,7 @@ import { parseConfig } from '../utils/parseConfig.util';
 const config = parseConfig({
     globalPath: {
         info        : "Base path for example",
-        default     : "/example/tc-example",
+        default     : "/microservice/tc-generate-token-ms",
     },
     port: {
         info        : "Port for application",
