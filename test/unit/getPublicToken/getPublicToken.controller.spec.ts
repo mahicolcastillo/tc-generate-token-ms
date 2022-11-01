@@ -1,23 +1,23 @@
-import getExampleController    from '../../../src/components/getExample/getExample.controller';
-import getExampleModule        from '../../../src/components/getExample/getExample.module';
+import getPublicTokenController    from '../../../src/components/getPublicToken/getPublicToken.controller';
+import getPublicTokenModule        from '../../../src/components/getPublicToken/getPublicToken.module';
 import { createRequest, createResponse } from 'node-mocks-http';
 
-const name = 'getExampleController';
+const name = 'getPublicTokenController';
 
-jest.mock('../../../src/components/getExample/getExample.module');
+jest.mock('../../../src/components/getPublicToken/getPublicToken.module');
 
 describe(name, () => {
     test(`${name} - OK`, async () => {
         const req = createRequest();
         const res = createResponse();
 
-        (getExampleModule as jest.MockedFunction<any>) = jest.fn().mockResolvedValue({
+        (getPublicTokenModule as jest.MockedFunction<any>) = jest.fn().mockResolvedValue({
             code: 200,
             message: 'Success',
             payload: {}    
         });
 
-        const response = await getExampleController(req, res);
+        const response = await getPublicTokenController(req, res);
         expect(response.statusCode).toBe(200);
     });
 
@@ -25,14 +25,14 @@ describe(name, () => {
         const req = createRequest();
         const res = createResponse();
 
-        (getExampleModule as jest.MockedFunction<any>) = jest.fn().mockRejectedValue({
+        (getPublicTokenModule as jest.MockedFunction<any>) = jest.fn().mockRejectedValue({
             code: 500,
             message: 'Internal Server Error',
             payload: {}    
         });
 
         try {
-            await getExampleController(req, res);
+            await getPublicTokenController(req, res);
         } catch (error) {
             expect(error).toBeTruthy();
         }

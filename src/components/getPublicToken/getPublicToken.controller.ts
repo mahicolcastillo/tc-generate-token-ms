@@ -1,15 +1,15 @@
 import { Logger as log }        from 'tslog';
 import { Request, Response }    from 'express';
 
-import getExampleModule     from './getExample.module';
+import getPublicTokenModule from './getPublicToken.module';
 import ResponseInterface    from '../../interfaces/response.interface';
 
 const logger : log = new log({ displayFunctionName: false}); 
 
-const getExampleController = async(req: Request, res: Response) => {
+const getPublicTokenController = async(req: Request, res: Response) => {
     try {
-        logger.info(`Starting controller getExample`);
-        const response: ResponseInterface = await getExampleModule(req.headers);
+        logger.info(`Starting controller getPublicToken`);
+        const response: ResponseInterface = await getPublicTokenModule(req.headers);
 
         return res.status(response.code).send(response);
     } catch (error: any) {
@@ -18,4 +18,4 @@ const getExampleController = async(req: Request, res: Response) => {
     }
 } 
 
-export default getExampleController;
+export default getPublicTokenController;
