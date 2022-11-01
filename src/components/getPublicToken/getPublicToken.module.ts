@@ -12,7 +12,7 @@ const getPublicTokenModule = async(headers: IncomingHttpHeaders): Promise<Respon
     try {
         logger.info(`Starting module getPublicTokenModule`);
 
-        const sesionId: string = `clientName.${headers.clientname}.${config.tokens.tokenSesion}`;
+        const sesionId = `clientName.${headers.clientname}.${config.tokens.tokenSesion}`;
         const buffer = Buffer.from(sesionId, 'ascii');
         const base64 = buffer.toString('base64');
 
