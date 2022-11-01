@@ -10,6 +10,7 @@ const getPublicTokenController = async(req: Request, res: Response) => {
     try {
         logger.info(`Starting controller getPublicToken`);
         const response: ResponseInterface = await getPublicTokenModule(req.headers);
+        logger.debug(`Response: `, response);
 
         return res.status(response.code).send(response);
     } catch (error: any) {
