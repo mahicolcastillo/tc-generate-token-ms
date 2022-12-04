@@ -1,6 +1,7 @@
 import express              from 'express';
 import helmet               from 'helmet';
 import bodyParser           from 'body-parser';
+import listEndpoints        from 'express-list-endpoints';
 import { Logger as log }    from 'tslog';
 require('express-async-errors');
 
@@ -16,6 +17,7 @@ const serverStart = async() => {
         app.use(helmet());
 
         routes(app);
+        showRoutes();
 
         app.listen(process.env.PORT || config.port || 3000, () => {
             logger.info(`Server listening on ${process.env.PORT || config.port ||  3000}, with basepath ${config.globalPath}`);
@@ -23,6 +25,15 @@ const serverStart = async() => {
     } catch (error) {
         logger.error('Error init server', error);
     }
+}
+
+const showRoutes = () => {
+    console.table(
+        listEndpoints(app).map((item: listEndpoints.Endpoint) => ({
+            METODOS: item.methods,
+            RUTA: item.path,
+        }))
+    );
 }
 
 serverStart();

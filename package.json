@@ -1,6 +1,6 @@
 {
   "name": "tc-generate-token-ms",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Generate Token for TuComanda Apps",
   "main": "index.js",
   "scripts": {
@@ -26,6 +26,7 @@
     "dotenv": "^16.0.3",
     "express": "^4.16.4",
     "express-async-errors": "^3.1.1",
+    "express-list-endpoints": "^6.0.0",
     "express-validator": "^6.14.2",
     "helmet": "^6.0.0",
     "jsonwebtoken": "^8.5.1",
@@ -33,6 +34,7 @@
   },
   "devDependencies": {
     "@types/express": "^4.16.1",
+    "@types/express-list-endpoints": "^6.0.0",
     "@types/jest": "^29.2.0",
     "@types/jsonwebtoken": "^8.5.9",
     "@types/node": "^18.11.3",
