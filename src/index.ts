@@ -28,6 +28,7 @@ const serverStart = async() => {
 }
 
 const showRoutes = () => {
+    // eslint-disable-next-line no-console
     console.table(
         listEndpoints(app).map((item: listEndpoints.Endpoint) => ({
             METODOS: item.methods,
