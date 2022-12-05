@@ -16,10 +16,9 @@ const getPublicTokenModule = async(headers: IncomingHttpHeaders): Promise<Respon
         const buffer = Buffer.from(sesionId, 'ascii');
         const base64 = buffer.toString('base64');
 
-        if(!headers.clientname || !headers.status) throw new Error;
+        if(!headers.clientname) throw new Error;
         const payload = {
             clientName: headers.clientname,
-            status: headers.status,
             sesionId: base64,
         };
 

@@ -10,11 +10,6 @@ const expressValidatorMiddleware = (req: Request, res: Response, next: NextFunct
       errores: errors.array(),
     });
   }
-
-  req.body    = matchedData(req, { locations: ['body'] });
-  req.params  = matchedData(req, { locations: ['params'] });
-  req.query   = matchedData(req, { locations: ['query'] });
-  req.headers = matchedData(req, { locations: ['headers'] });
   return next();
 };
 
